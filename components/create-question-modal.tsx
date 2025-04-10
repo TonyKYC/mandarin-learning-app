@@ -1,10 +1,6 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useState } from "react"
-import { Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -13,18 +9,27 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import type { QAData } from "@/data/interviewData"
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { createQuestion } from "@/db/questions";
+import type { QAData } from "@/mock-data/interviewData";
+import { Plus } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { v4 as uuidv4 } from "uuid";
 
 interface CreateQuestionModalProps {
-  onAddQuestion: (question: QAData[keyof QAData]) => void
+  onAddQuestion: (question: QAData[keyof QAData], id: string) => void;
 }
 
-export function CreateQuestionModal({ onAddQuestion }: CreateQuestionModalProps) {
-  const [open, setOpen] = useState(false)
+export function CreateQuestionModal({
+  onAddQuestion,
+}: CreateQuestionModalProps) {
+  const [open, setOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     english: {
       question: "",
@@ -38,35 +43,69 @@ export function CreateQuestionModal({ onAddQuestion }: CreateQuestionModalProps)
       question: "",
       answer: "",
     },
-  })
+  });
 
-  const handleChange = (language: "english" | "pinyin" | "chinese", field: "question" | "answer", value: string) => {
+  const handleChange = (
+    language: "english" | "pinyin" | "chinese",
+    field: "question" | "answer",
+    value: string
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [language]: {
         ...prev[language],
         [field]: value,
       },
-    }))
-  }
+    }));
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
 
-    // Basic validation
-    if (!formData.english.question || !formData.english.answer) {
-      alert("English question and answer are required")
-      return
+    try {
+      // Basic validation
+      if (!formData.english.question || !formData.english.answer) {
+        toast.error("English question and answer are required");
+        return;
+      }
+
+      // Create question in database
+      const id = uuidv4();
+      const newQuestion = {
+        english: {
+          question: formData.english.question,
+          answer: formData.english.answer,
+        },
+        pinyin: {
+          question: formData.pinyin.question,
+          answer: formData.pinyin.answer,
+        },
+        chinese: {
+          question: formData.chinese.question,
+          answer: formData.chinese.answer,
+        },
+      };
+      await createQuestion(newQuestion);
+
+      // Update local state through callback
+      onAddQuestion(newQuestion, id);
+
+      // Reset form and close modal
+      setFormData({
+        english: { question: "", answer: "" },
+        pinyin: { question: "", answer: "" },
+        chinese: { question: "", answer: "" },
+      });
+      setOpen(false);
+      toast.success("Question created successfully!");
+    } catch (error) {
+      console.error("Error creating question:", error);
+      toast.error("Failed to create question. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    onAddQuestion(formData)
-    setFormData({
-      english: { question: "", answer: "" },
-      pinyin: { question: "", answer: "" },
-      chinese: { question: "", answer: "" },
-    })
-    setOpen(false)
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -81,7 +120,9 @@ export function CreateQuestionModal({ onAddQuestion }: CreateQuestionModalProps)
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Create New Question</DialogTitle>
-            <DialogDescription>Add a new question and answer in English, Pinyin, and Chinese.</DialogDescription>
+            <DialogDescription>
+              Add a new question and answer in English, Pinyin, and Chinese.
+            </DialogDescription>
           </DialogHeader>
 
           <Tabs defaultValue="english" className="mt-4">
@@ -97,7 +138,9 @@ export function CreateQuestionModal({ onAddQuestion }: CreateQuestionModalProps)
                 <Textarea
                   id="english-question"
                   value={formData.english.question}
-                  onChange={(e) => handleChange("english", "question", e.target.value)}
+                  onChange={(e) =>
+                    handleChange("english", "question", e.target.value)
+                  }
                   placeholder="Enter the question in English"
                   required
                 />
@@ -107,7 +150,9 @@ export function CreateQuestionModal({ onAddQuestion }: CreateQuestionModalProps)
                 <Textarea
                   id="english-answer"
                   value={formData.english.answer}
-                  onChange={(e) => handleChange("english", "answer", e.target.value)}
+                  onChange={(e) =>
+                    handleChange("english", "answer", e.target.value)
+                  }
                   placeholder="Enter the answer in English"
                   required
                 />
@@ -120,7 +165,9 @@ export function CreateQuestionModal({ onAddQuestion }: CreateQuestionModalProps)
                 <Textarea
                   id="pinyin-question"
                   value={formData.pinyin.question}
-                  onChange={(e) => handleChange("pinyin", "question", e.target.value)}
+                  onChange={(e) =>
+                    handleChange("pinyin", "question", e.target.value)
+                  }
                   placeholder="Enter the question in Pinyin"
                 />
               </div>
@@ -129,7 +176,9 @@ export function CreateQuestionModal({ onAddQuestion }: CreateQuestionModalProps)
                 <Textarea
                   id="pinyin-answer"
                   value={formData.pinyin.answer}
-                  onChange={(e) => handleChange("pinyin", "answer", e.target.value)}
+                  onChange={(e) =>
+                    handleChange("pinyin", "answer", e.target.value)
+                  }
                   placeholder="Enter the answer in Pinyin"
                 />
               </div>
@@ -141,7 +190,9 @@ export function CreateQuestionModal({ onAddQuestion }: CreateQuestionModalProps)
                 <Textarea
                   id="chinese-question"
                   value={formData.chinese.question}
-                  onChange={(e) => handleChange("chinese", "question", e.target.value)}
+                  onChange={(e) =>
+                    handleChange("chinese", "question", e.target.value)
+                  }
                   placeholder="Enter the question in Chinese"
                 />
               </div>
@@ -150,7 +201,9 @@ export function CreateQuestionModal({ onAddQuestion }: CreateQuestionModalProps)
                 <Textarea
                   id="chinese-answer"
                   value={formData.chinese.answer}
-                  onChange={(e) => handleChange("chinese", "answer", e.target.value)}
+                  onChange={(e) =>
+                    handleChange("chinese", "answer", e.target.value)
+                  }
                   placeholder="Enter the answer in Chinese"
                 />
               </div>
@@ -158,10 +211,12 @@ export function CreateQuestionModal({ onAddQuestion }: CreateQuestionModalProps)
           </Tabs>
 
           <DialogFooter className="mt-6">
-            <Button type="submit">Add Question</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Creating..." : "Add Question"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

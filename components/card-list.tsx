@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import { Columns, LayoutGrid, EyeOff, Eye } from "lucide-react";
-import type { QAData } from "@/data/interviewData";
+import type { QAData } from "@/mock-data/interviewData";
+import { Columns, Eye, EyeOff, LayoutGrid } from "lucide-react";
+import { useState } from "react";
 
 interface CardListProps {
   filteredData: [string, QAData[keyof QAData]][];

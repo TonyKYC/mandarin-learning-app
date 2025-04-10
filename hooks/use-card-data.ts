@@ -64,15 +64,14 @@ export function useCardData(initialData: QAData) {
     setCurrentCard(keys[randomIndex]);
   };
 
-  const addQuestion = (question: QAData[keyof QAData]) => {
-    const newId = (Object.keys(data).length + 1).toString();
+  const addQuestion = (question: QAData[keyof QAData], id: string) => {
     setData((prevData) => ({
       ...prevData,
-      [newId]: question,
+      [id]: question,
     }));
 
     // Navigate to the new card
-    setCurrentCard(newId);
+    setCurrentCard(id);
   };
 
   return {

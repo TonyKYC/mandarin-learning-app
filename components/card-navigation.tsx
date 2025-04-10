@@ -1,19 +1,25 @@
-"use client"
+"use client";
 
-import { Shuffle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { QAData } from "@/data/interviewData"
+import { Shuffle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { QAData } from "@/mock-data/interviewData";
 
 interface CardNavigationProps {
-  data: QAData
-  currentCard: string
-  setCurrentCard: (id: string) => void
-  goToPreviousCard: () => void
-  goToNextCard: () => void
-  goToRandomCard: () => void
-  isFirstCard: boolean
-  isLastCard: boolean
+  data: QAData;
+  currentCard: string;
+  setCurrentCard: (id: string) => void;
+  goToPreviousCard: () => void;
+  goToNextCard: () => void;
+  goToRandomCard: () => void;
+  isFirstCard: boolean;
+  isLastCard: boolean;
 }
 
 export function CardNavigation({
@@ -42,17 +48,31 @@ export function CardNavigation({
       </Select>
 
       <div className="flex gap-2 w-full sm:w-auto sm:ml-auto">
-        <Button variant="outline" className="flex-1 sm:flex-none" onClick={goToPreviousCard} disabled={isFirstCard}>
+        <Button
+          variant="outline"
+          className="flex-1 sm:flex-none"
+          onClick={goToPreviousCard}
+          disabled={isFirstCard}
+        >
           Previous
         </Button>
-        <Button variant="outline" className="flex-1 sm:flex-none" onClick={goToRandomCard} title="Show random question">
+        <Button
+          variant="outline"
+          className="flex-1 sm:flex-none"
+          onClick={goToRandomCard}
+          title="Show random question"
+        >
           <Shuffle className="h-4 w-4" />
           <span className="sr-only">Random</span>
         </Button>
-        <Button className="flex-1 sm:flex-none" onClick={goToNextCard} disabled={isLastCard}>
+        <Button
+          className="flex-1 sm:flex-none"
+          onClick={goToNextCard}
+          disabled={isLastCard}
+        >
           Next
         </Button>
       </div>
     </div>
-  )
+  );
 }

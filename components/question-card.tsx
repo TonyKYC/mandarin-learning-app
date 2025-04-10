@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import type { QAData } from "@/data/interviewData";
+import type { QAData } from "@/mock-data/interviewData";
 
 interface QuestionCardProps {
   id: string;

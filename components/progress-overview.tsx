@@ -15,7 +15,7 @@ import {
   EyeOff,
   Eye,
 } from "lucide-react";
-import type { QAData } from "@/data/interviewData";
+import type { QAData } from "@/mock-data/interviewData";
 
 interface ProgressOverviewProps {
   data: QAData;
