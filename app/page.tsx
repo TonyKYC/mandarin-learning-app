@@ -28,6 +28,9 @@ export default function Home() {
     }
     return "overview";
   });
+  const [initialProgress, setInitialProgress] = useState<
+    Record<string, boolean>
+  >({});
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -38,11 +41,13 @@ export default function Home() {
 
   const loadDbQuestions = async () => {
     try {
-      const questions = await fetchAllQuestions();
-      setDbQuestions(questions || {});
+      const { data: questions, progress } = await fetchAllQuestions();
+      setDbQuestions(questions);
+      setInitialProgress(progress);
     } catch (error) {
       console.error("Error loading questions:", error);
       setDbQuestions({});
+      setInitialProgress({});
     } finally {
       setIsLoading(false);
     }
@@ -74,7 +79,7 @@ export default function Home() {
     toggleCardCompletion,
     completedCount,
     progressPercentage,
-  } = useCardProgress(Object.keys(data).length);
+  } = useCardProgress(Object.keys(data).length, initialProgress);
 
   // Show loading state while fetching data
   if (isLoading) {

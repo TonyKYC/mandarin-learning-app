@@ -14,9 +14,16 @@ export type QuestionRow = {
   pinyin_answer: string;
   chinese_question: string;
   chinese_answer: string;
+  is_completed: boolean;
 };
 
-export async function fetchAllQuestions(): Promise<QAData> {
+/*
+ * Questions
+ */
+export async function fetchAllQuestions(): Promise<{
+  data: QAData;
+  progress: Record<string, boolean>;
+}> {
   const { data, error } = await supabase
     .from("questions")
     .select("*")
@@ -27,9 +34,12 @@ export async function fetchAllQuestions(): Promise<QAData> {
     throw error;
   }
 
-  // Transform the flat data structure into the QAData format
-  return (data as QuestionRow[]).reduce((acc, row) => {
-    acc[row.id.toString()] = {
+  // Transform the flat data structure into the QAData format and extract progress
+  const qaData: QAData = {};
+  const progress: Record<string, boolean> = {};
+
+  (data as QuestionRow[]).forEach((row) => {
+    qaData[row.id.toString()] = {
       english: {
         question: row.english_question,
         answer: row.english_answer,
@@ -43,8 +53,10 @@ export async function fetchAllQuestions(): Promise<QAData> {
         answer: row.chinese_answer,
       },
     };
-    return acc;
-  }, {} as QAData);
+    progress[row.id.toString()] = row.is_completed || false;
+  });
+
+  return { data: qaData, progress };
 }
 
 export async function createQuestion(
@@ -74,6 +86,7 @@ export async function createQuestion(
       pinyin_answer: question.pinyin.answer,
       chinese_question: question.chinese.question,
       chinese_answer: question.chinese.answer,
+      is_completed: false,
     },
   ]);
 
@@ -83,45 +96,6 @@ export async function createQuestion(
   }
 
   return nextId;
-}
-
-export async function fetchUserProgress(userId: string) {
-  const { data, error } = await supabase
-    .from("user_progress")
-    .select("*")
-    .eq("user_id", userId);
-
-  if (error) {
-    console.error("Error fetching user progress:", error);
-    throw error;
-  }
-
-  return data.reduce((acc, row) => {
-    acc[row.question_id] = row.is_completed;
-    return acc;
-  }, {} as Record<string, boolean>);
-}
-
-export async function updateUserProgress(
-  userId: string,
-  questionId: number,
-  isCompleted: boolean
-) {
-  const { error } = await supabase.from("user_progress").upsert(
-    {
-      user_id: userId,
-      question_id: questionId,
-      is_completed: isCompleted,
-    },
-    {
-      onConflict: "user_id,question_id",
-    }
-  );
-
-  if (error) {
-    console.error("Error updating user progress:", error);
-    throw error;
-  }
 }
 
 export async function updateQuestion(
@@ -142,6 +116,21 @@ export async function updateQuestion(
 
   if (error) {
     console.error("Error updating question:", error);
+    throw error;
+  }
+}
+
+export async function updateQuestionProgress(
+  questionId: number,
+  isCompleted: boolean
+): Promise<void> {
+  const { error } = await supabase
+    .from("questions")
+    .update({ is_completed: isCompleted })
+    .eq("id", questionId);
+
+  if (error) {
+    console.error("Error updating question progress:", error);
     throw error;
   }
 }

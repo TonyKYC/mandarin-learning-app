@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/src/components/theme-provider";
+import { DataProvider } from "@/app/data-provider";
+import { fetchAllQuestions } from "@/src/db/questions";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,11 +14,13 @@ export const metadata: Metadata = {
   generator: "v0.dev",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+  const { data, progress } = await fetchAllQuestions();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
@@ -26,7 +30,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <DataProvider initialData={data} initialProgress={progress}>
+            {children}
+          </DataProvider>
         </ThemeProvider>
       </body>
     </html>
