@@ -1,16 +1,21 @@
 "use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ThemeHeader } from "@/components/theme-header";
-import { SearchBar } from "@/components/search-bar";
-import { ProgressOverview } from "@/components/progress-overview";
-import { CardList } from "@/components/card-list";
-import { CardNavigation } from "@/components/card-navigation";
-import { QuestionCard } from "@/components/question-card";
-import { useCardData } from "@/hooks/use-card-data";
-import { useCardProgress } from "@/hooks/use-card-progress";
-import { fetchAllQuestions } from "@/db/questions";
-import { Card } from "@/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/src/components/ui/tabs";
+import { ThemeHeader } from "@/src/components/theme-header";
+import { SearchBar } from "@/src/components/search-bar";
+import { ProgressOverview } from "@/src/components/progress-overview";
+import { CardList } from "@/src/components/card-list";
+import { CardNavigation } from "@/src/components/card-navigation";
+import { QuestionCard } from "@/src/components/question-card";
+import { useCardData } from "@/src/hooks/use-card-data";
+import { useCardProgress } from "@/src/hooks/use-card-progress";
+import { fetchAllQuestions } from "@/src/db/questions";
+import { Card } from "@/src/components/ui/card";
 import { useEffect, useState } from "react";
 import { QAData } from "@/app/data-provider";
 
