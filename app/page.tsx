@@ -17,12 +17,23 @@ import { QAData } from "@/app/data-provider";
 export default function Home() {
   const [dbQuestions, setDbQuestions] = useState<QAData>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("activeTab") || "overview";
+    }
+    return "overview";
+  });
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("activeTab", value);
+    }
+  };
 
   const loadDbQuestions = async () => {
     try {
-      console.log("Fetching questions from database...");
       const questions = await fetchAllQuestions();
-      console.log("Fetched questions:", questions);
       setDbQuestions(questions || {});
     } catch (error) {
       console.error("Error loading questions:", error);
@@ -59,9 +70,6 @@ export default function Home() {
     completedCount,
     progressPercentage,
   } = useCardProgress(Object.keys(data).length);
-
-  console.log("Current data state:", data);
-  console.log("Current dbQuestions state:", dbQuestions);
 
   // Show loading state while fetching data
   if (isLoading) {
@@ -106,7 +114,11 @@ export default function Home() {
       />
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-      <Tabs defaultValue="overview" className="w-full">
+      <Tabs
+        value={activeTab}
+        onValueChange={handleTabChange}
+        className="w-full"
+      >
         <TabsList className="grid grid-cols-3 mb-6 w-full">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="all">All Cards</TabsTrigger>
