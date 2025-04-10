@@ -9,6 +9,7 @@ A modern, interactive web application designed to help users learn Mandarin Chin
 - Multiple learning modes (English, Pinyin, Chinese)
 - Responsive design for all devices
 - Optimized performance with React Server Components
+- Rate limiting to ensure fair usage and prevent abuse
 
 ## Live Demo
 
