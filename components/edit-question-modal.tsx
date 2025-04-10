@@ -71,118 +71,123 @@ export function EditQuestionModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-6 w-6 p-0.5 hover:bg-slate-100 dark:hover:bg-slate-800"
+    <div onClick={(e) => e.stopPropagation()}>
+      <Dialog open={open} onOpenChange={setOpen} modal={true}>
+        <DialogTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 p-0.5 hover:bg-slate-100 dark:hover:bg-slate-800"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Pencil className="h-3.5 w-3.5" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent
+          className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
-          <Pencil className="h-3.5 w-3.5" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>Edit Question</DialogTitle>
-            <DialogDescription>
-              Update the question and answer in English, Pinyin, and Chinese.
-            </DialogDescription>
-          </DialogHeader>
+          <form onSubmit={handleSubmit}>
+            <DialogHeader>
+              <DialogTitle>Edit Question</DialogTitle>
+              <DialogDescription>
+                Update the question and answer in English, Pinyin, and Chinese.
+              </DialogDescription>
+            </DialogHeader>
 
-          <Tabs defaultValue="english" className="mt-4">
-            <TabsList className="grid grid-cols-3 mb-4">
-              <TabsTrigger value="english">English</TabsTrigger>
-              <TabsTrigger value="pinyin">Pinyin</TabsTrigger>
-              <TabsTrigger value="chinese">Chinese</TabsTrigger>
-            </TabsList>
+            <Tabs defaultValue="english" className="mt-4">
+              <TabsList className="grid grid-cols-3 mb-4">
+                <TabsTrigger value="english">English</TabsTrigger>
+                <TabsTrigger value="pinyin">Pinyin</TabsTrigger>
+                <TabsTrigger value="chinese">Chinese</TabsTrigger>
+              </TabsList>
 
-            <TabsContent value="english" className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="english-question">Question (English) *</Label>
-                <Textarea
-                  id="english-question"
-                  value={formData.english.question}
-                  onChange={(e) =>
-                    handleChange("english", "question", e.target.value)
-                  }
-                  placeholder="Enter the question in English"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="english-answer">Answer (English) *</Label>
-                <Textarea
-                  id="english-answer"
-                  value={formData.english.answer}
-                  onChange={(e) =>
-                    handleChange("english", "answer", e.target.value)
-                  }
-                  placeholder="Enter the answer in English"
-                  required
-                />
-              </div>
-            </TabsContent>
+              <TabsContent value="english" className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="english-question">Question (English) *</Label>
+                  <Textarea
+                    id="english-question"
+                    value={formData.english.question}
+                    onChange={(e) =>
+                      handleChange("english", "question", e.target.value)
+                    }
+                    placeholder="Enter the question in English"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="english-answer">Answer (English) *</Label>
+                  <Textarea
+                    id="english-answer"
+                    value={formData.english.answer}
+                    onChange={(e) =>
+                      handleChange("english", "answer", e.target.value)
+                    }
+                    placeholder="Enter the answer in English"
+                    required
+                  />
+                </div>
+              </TabsContent>
 
-            <TabsContent value="pinyin" className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="pinyin-question">Question (Pinyin)</Label>
-                <Textarea
-                  id="pinyin-question"
-                  value={formData.pinyin.question}
-                  onChange={(e) =>
-                    handleChange("pinyin", "question", e.target.value)
-                  }
-                  placeholder="Enter the question in Pinyin"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="pinyin-answer">Answer (Pinyin)</Label>
-                <Textarea
-                  id="pinyin-answer"
-                  value={formData.pinyin.answer}
-                  onChange={(e) =>
-                    handleChange("pinyin", "answer", e.target.value)
-                  }
-                  placeholder="Enter the answer in Pinyin"
-                />
-              </div>
-            </TabsContent>
+              <TabsContent value="pinyin" className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="pinyin-question">Question (Pinyin)</Label>
+                  <Textarea
+                    id="pinyin-question"
+                    value={formData.pinyin.question}
+                    onChange={(e) =>
+                      handleChange("pinyin", "question", e.target.value)
+                    }
+                    placeholder="Enter the question in Pinyin"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="pinyin-answer">Answer (Pinyin)</Label>
+                  <Textarea
+                    id="pinyin-answer"
+                    value={formData.pinyin.answer}
+                    onChange={(e) =>
+                      handleChange("pinyin", "answer", e.target.value)
+                    }
+                    placeholder="Enter the answer in Pinyin"
+                  />
+                </div>
+              </TabsContent>
 
-            <TabsContent value="chinese" className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="chinese-question">Question (Chinese)</Label>
-                <Textarea
-                  id="chinese-question"
-                  value={formData.chinese.question}
-                  onChange={(e) =>
-                    handleChange("chinese", "question", e.target.value)
-                  }
-                  placeholder="Enter the question in Chinese"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="chinese-answer">Answer (Chinese)</Label>
-                <Textarea
-                  id="chinese-answer"
-                  value={formData.chinese.answer}
-                  onChange={(e) =>
-                    handleChange("chinese", "answer", e.target.value)
-                  }
-                  placeholder="Enter the answer in Chinese"
-                />
-              </div>
-            </TabsContent>
-          </Tabs>
+              <TabsContent value="chinese" className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="chinese-question">Question (Chinese)</Label>
+                  <Textarea
+                    id="chinese-question"
+                    value={formData.chinese.question}
+                    onChange={(e) =>
+                      handleChange("chinese", "question", e.target.value)
+                    }
+                    placeholder="Enter the question in Chinese"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="chinese-answer">Answer (Chinese)</Label>
+                  <Textarea
+                    id="chinese-answer"
+                    value={formData.chinese.answer}
+                    onChange={(e) =>
+                      handleChange("chinese", "answer", e.target.value)
+                    }
+                    placeholder="Enter the answer in Chinese"
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
 
-          <DialogFooter className="mt-6">
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Updating..." : "Update Question"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+            <DialogFooter className="mt-6">
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Updating..." : "Update Question"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

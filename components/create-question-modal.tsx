@@ -109,7 +109,7 @@ export function CreateQuestionModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} modal={true}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-1">
           <Plus className="h-4 w-4" />
