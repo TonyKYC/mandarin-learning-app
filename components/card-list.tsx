@@ -36,8 +36,10 @@ export function CardList({
                 : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
             }`}
         >
-          <CardHeader className="bg-slate-50 dark:bg-neutral-950 border-b border-white/20 flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">Question {id}</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between p-4">
+            <CardTitle className="text-base font-medium">
+              Question {id}
+            </CardTitle>
             <Checkbox
               checked={completedCards[id] || false}
               onCheckedChange={() => toggleCardCompletion(id)}

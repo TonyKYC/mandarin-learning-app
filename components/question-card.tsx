@@ -27,8 +27,8 @@ export function QuestionCard({
             : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
         }`}
     >
-      <CardHeader className="bg-slate-50 dark:bg-neutral-950 border-b border-white/20 flex flex-row items-center justify-between">
-        <CardTitle className="text-lg">Question {id}</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between p-4">
+        <CardTitle className="text-base font-medium">Question {id}</CardTitle>
         <Checkbox
           checked={isCompleted}
           onCheckedChange={onToggleCompletion}
@@ -37,34 +37,34 @@ export function QuestionCard({
       </CardHeader>
       <CardContent className="p-0">
         <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x dark:divide-slate-700">
-          <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+          <div className="p-4 space-y-4">
             <div>
-              <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">
+              <h3 className="font-medium text-slate-800 dark:text-slate-200">
                 Question
               </h3>
-              <p className="mt-2 text-lg sm:text-xl text-slate-700 dark:text-slate-300 break-words">
+              <p className="mt-1 text-slate-700 dark:text-slate-300 break-words">
                 {card.english.question}
               </p>
-              <p className="mt-2 text-lg sm:text-xl text-rose-600 dark:text-rose-400 font-medium break-words">
+              <p className="mt-1 text-rose-600 dark:text-rose-400 font-medium break-words">
                 {card.pinyin.question}
               </p>
-              <p className="mt-2 text-base sm:text-lg text-slate-500 dark:text-slate-400 break-words">
+              <p className="mt-1 text-slate-500 dark:text-slate-400 text-sm break-words">
                 {card.chinese.question}
               </p>
             </div>
           </div>
-          <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+          <div className="p-4 space-y-4">
             <div>
-              <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">
+              <h3 className="font-medium text-slate-800 dark:text-slate-200">
                 Answer
               </h3>
-              <p className="mt-2 text-lg sm:text-xl text-slate-700 dark:text-slate-300 break-words">
+              <p className="mt-1 text-slate-700 dark:text-slate-300 break-words">
                 {card.english.answer}
               </p>
-              <p className="mt-2 text-lg sm:text-xl text-rose-600 dark:text-rose-400 font-medium break-words">
+              <p className="mt-1 text-rose-600 dark:text-rose-400 font-medium break-words">
                 {card.pinyin.answer}
               </p>
-              <p className="mt-2 text-base sm:text-lg text-slate-500 dark:text-slate-400 break-words">
+              <p className="mt-1 text-slate-500 dark:text-slate-400 text-sm break-words">
                 {card.chinese.answer}
               </p>
             </div>
