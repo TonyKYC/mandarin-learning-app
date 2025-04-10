@@ -23,12 +23,14 @@ interface EditQuestionModalProps {
   id: number;
   question: QAData[keyof QAData];
   onRefetch?: () => Promise<void>;
+  className?: string;
 }
 
 export function EditQuestionModal({
   id,
   question,
   onRefetch,
+  className,
 }: EditQuestionModalProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -71,7 +73,7 @@ export function EditQuestionModal({
   };
 
   return (
-    <div onClick={(e) => e.stopPropagation()}>
+    <div onClick={(e) => e.stopPropagation()} className={className}>
       <Dialog open={open} onOpenChange={setOpen} modal={true}>
         <DialogTrigger asChild>
           <Button
@@ -80,7 +82,7 @@ export function EditQuestionModal({
             className="h-6 w-6 p-0.5 hover:bg-slate-100 dark:hover:bg-slate-800"
             onClick={(e) => e.stopPropagation()}
           >
-            <Pencil className="h-3.5 w-3.5" />
+            <Pencil className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
           </Button>
         </DialogTrigger>
         <DialogContent

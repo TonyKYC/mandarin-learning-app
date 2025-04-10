@@ -122,6 +122,7 @@ export default function Home() {
             toggleCardCompletion={toggleCardCompletion}
             progressPercentage={progressPercentage}
             completedCount={completedCount}
+            onRefetch={loadDbQuestions}
           />
         </TabsContent>
 
@@ -131,6 +132,7 @@ export default function Home() {
             filteredData={filteredData}
             completedCards={completedCards}
             toggleCardCompletion={toggleCardCompletion}
+            onRefetch={loadDbQuestions}
           />
         </TabsContent>
 

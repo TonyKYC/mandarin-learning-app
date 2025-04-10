@@ -16,6 +16,7 @@ import {
   Eye,
 } from "lucide-react";
 import type { QAData } from "@/mock-data/interviewData";
+import { EditQuestionModal } from "./edit-question-modal";
 
 interface ProgressOverviewProps {
   data: QAData;
@@ -24,6 +25,7 @@ interface ProgressOverviewProps {
   toggleCardCompletion: (id: string) => void;
   progressPercentage: number;
   completedCount: number;
+  onRefetch?: () => Promise<void>;
 }
 
 export function ProgressOverview({
@@ -33,6 +35,7 @@ export function ProgressOverview({
   toggleCardCompletion,
   progressPercentage,
   completedCount,
+  onRefetch,
 }: ProgressOverviewProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [hideCompleted, setHideCompleted] = useState(false);
@@ -114,7 +117,7 @@ export function ProgressOverview({
                   onClick={() => toggleCardCompletion(id)}
                   className={`p-4 border rounded-lg ${
                     isExpanded ? "flex-col" : ""
-                  } 
+                  } group
                     ${
                       completedCards[id]
                         ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900 hover:bg-green-100 dark:hover:bg-green-900/30"
@@ -124,11 +127,19 @@ export function ProgressOverview({
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-medium">Question {id}</span>
-                      <Checkbox
-                        checked={completedCards[id] || false}
-                        onCheckedChange={() => toggleCardCompletion(id)}
-                        onClick={(e) => e.stopPropagation()}
-                      />
+                      <div className="flex items-center gap-2">
+                        <EditQuestionModal
+                          id={Number(id)}
+                          question={card}
+                          onRefetch={onRefetch}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity mt-1"
+                        />
+                        <Checkbox
+                          checked={completedCards[id] || false}
+                          onCheckedChange={() => toggleCardCompletion(id)}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </div>
                     </div>
                     {isExpanded ? (
                       <>

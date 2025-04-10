@@ -6,17 +6,20 @@ import { Checkbox } from "@/components/ui/checkbox";
 import type { QAData } from "@/mock-data/interviewData";
 import { Columns, Eye, EyeOff, LayoutGrid } from "lucide-react";
 import { useState } from "react";
+import { EditQuestionModal } from "./edit-question-modal";
 
 interface CardListProps {
   filteredData: [string, QAData[keyof QAData]][];
   completedCards: Record<string, boolean>;
   toggleCardCompletion: (id: string) => void;
+  onRefetch?: () => Promise<void>;
 }
 
 export function CardList({
   filteredData,
   completedCards,
   toggleCardCompletion,
+  onRefetch,
 }: CardListProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [hideCompleted, setHideCompleted] = useState(false);
@@ -115,7 +118,7 @@ export function CardList({
           <Card
             key={id}
             onClick={() => toggleCardCompletion(id)}
-            className={`overflow-hidden cursor-pointer transition-colors
+            className={`overflow-hidden cursor-pointer transition-colors group
               ${
                 completedCards[id]
                   ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900 hover:bg-green-100 dark:hover:bg-green-900/30"
@@ -126,11 +129,19 @@ export function CardList({
               <CardTitle className="text-base font-medium">
                 Question {id}
               </CardTitle>
-              <Checkbox
-                checked={completedCards[id] || false}
-                onCheckedChange={() => toggleCardCompletion(id)}
-                onClick={(e) => e.stopPropagation()}
-              />
+              <div className="flex items-center gap-2">
+                <EditQuestionModal
+                  id={Number(id)}
+                  question={card}
+                  onRefetch={onRefetch}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity mt-1"
+                />
+                <Checkbox
+                  checked={completedCards[id] || false}
+                  onCheckedChange={() => toggleCardCompletion(id)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
             </CardHeader>
             <CardContent className="p-0">
               <div className="grid grid-cols-1 divide-y dark:divide-slate-700">

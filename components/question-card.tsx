@@ -35,13 +35,12 @@ export function QuestionCard({
       <CardHeader className="flex flex-row items-center justify-between p-4">
         <CardTitle className="text-base font-medium">Question {id}</CardTitle>
         <div className="flex items-center gap-2">
-          <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-            <EditQuestionModal
-              id={Number(id)}
-              question={card}
-              onRefetch={onRefetch}
-            />
-          </div>
+          <EditQuestionModal
+            id={Number(id)}
+            question={card}
+            onRefetch={onRefetch}
+            className="opacity-0 group-hover:opacity-100 transition-opacity mt-1"
+          />
           <Checkbox
             checked={isCompleted}
             onCheckedChange={onToggleCompletion}
