@@ -153,6 +153,7 @@ export default function Home() {
               card={data[currentCard]}
               isCompleted={completedCards[currentCard] || false}
               onToggleCompletion={() => toggleCardCompletion(currentCard)}
+              onRefetch={loadDbQuestions}
             />
           )}
         </TabsContent>

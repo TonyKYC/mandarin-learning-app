@@ -123,3 +123,25 @@ export async function updateUserProgress(
     throw error;
   }
 }
+
+export async function updateQuestion(
+  id: number,
+  question: QAData[keyof QAData]
+): Promise<void> {
+  const { error } = await supabase
+    .from("questions")
+    .update({
+      english_question: question.english.question,
+      english_answer: question.english.answer,
+      pinyin_question: question.pinyin.question,
+      pinyin_answer: question.pinyin.answer,
+      chinese_question: question.chinese.question,
+      chinese_answer: question.chinese.answer,
+    })
+    .eq("id", id);
+
+  if (error) {
+    console.error("Error updating question:", error);
+    throw error;
+  }
+}
