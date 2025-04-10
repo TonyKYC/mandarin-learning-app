@@ -6,6 +6,7 @@ import {
   useContext,
   useMemo,
   useState,
+  useOptimistic,
   type ReactNode,
 } from "react";
 
@@ -61,10 +62,20 @@ export function DataProvider({
   const [completedCards, setCompletedCards] = useState<Record<string, boolean>>(
     initialProgress || {}
   );
+  const [optimisticCompletedCards, setOptimisticCompletedCards] = useOptimistic(
+    completedCards,
+    (state, newValue: { id: string; value: boolean }) => ({
+      ...state,
+      [newValue.id]: newValue.value,
+    })
+  );
 
   const toggleCardCompletion = useMemo(
     () => async (id: string) => {
-      const newValue = !completedCards[id];
+      const newValue = !optimisticCompletedCards[id];
+
+      // Optimistically update the UI
+      setOptimisticCompletedCards({ id, value: newValue });
 
       try {
         await updateQuestionProgress(parseInt(id), newValue);
@@ -74,9 +85,11 @@ export function DataProvider({
         }));
       } catch (error) {
         console.error("Error updating progress:", error);
+        // Revert optimistic update on error
+        setOptimisticCompletedCards({ id, value: !newValue });
       }
     },
-    [completedCards]
+    [optimisticCompletedCards]
   );
 
   // Memoize the context value to prevent unnecessary re-renders
@@ -84,10 +97,10 @@ export function DataProvider({
     () => ({
       data,
       setData,
-      completedCards,
+      completedCards: optimisticCompletedCards,
       toggleCardCompletion,
     }),
-    [data, completedCards, toggleCardCompletion]
+    [data, optimisticCompletedCards, toggleCardCompletion]
   );
 
   return (
