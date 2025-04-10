@@ -14,9 +14,9 @@ import { CardNavigation } from "@/src/components/card-navigation";
 import { QuestionCard } from "@/src/components/question-card";
 import { useCardData } from "@/src/hooks/use-card-data";
 import { useCardProgress } from "@/src/hooks/use-card-progress";
-import { fetchAllQuestions } from "@/src/db/questions";
+import { fetchAllQuestions, updateQuestionProgress } from "@/src/db/questions";
 import { Card } from "@/src/components/ui/card";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { QAData } from "@/app/data-provider";
 
 export default function Home() {
@@ -28,9 +28,11 @@ export default function Home() {
     }
     return "overview";
   });
-  const [initialProgress, setInitialProgress] = useState<
-    Record<string, boolean>
-  >({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentCard, setCurrentCard] = useState("");
+  const [initialCompletedCards, setInitialCompletedCards] = useState<
+    Set<string>
+  >(new Set());
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -43,11 +45,23 @@ export default function Home() {
     try {
       const { data: questions, progress } = await fetchAllQuestions();
       setDbQuestions(questions);
-      setInitialProgress(progress);
+
+      // Initialize completedCards from progress
+      const completedSet = new Set<string>();
+      Object.entries(progress).forEach(([id, isCompleted]) => {
+        if (isCompleted) {
+          completedSet.add(id);
+        }
+      });
+      setInitialCompletedCards(completedSet);
+
+      if (!currentCard && Object.keys(questions).length > 0) {
+        setCurrentCard(Object.keys(questions)[0]);
+      }
     } catch (error) {
       console.error("Error loading questions:", error);
       setDbQuestions({});
-      setInitialProgress({});
+      setInitialCompletedCards(new Set());
     } finally {
       setIsLoading(false);
     }
@@ -57,29 +71,72 @@ export default function Home() {
     loadDbQuestions();
   }, []);
 
-  // Only initialize useCardData when we have dbQuestions
-  const cardData = useCardData(dbQuestions);
-  const {
-    data,
-    searchTerm,
-    setSearchTerm,
-    currentCard,
-    setCurrentCard,
-    filteredData,
-    goToNextCard,
-    goToPreviousCard,
-    goToRandomCard,
-    addQuestion,
-    isFirstCard,
-    isLastCard,
-  } = cardData;
+  const { completedCount, progressPercentage } = useCardProgress(
+    initialCompletedCards,
+    Object.keys(dbQuestions).length
+  );
 
-  const {
-    completedCards,
-    toggleCardCompletion,
-    completedCount,
-    progressPercentage,
-  } = useCardProgress(Object.keys(data).length, initialProgress);
+  // Filter data based on search term
+  const filteredData = Object.entries(dbQuestions).filter(([_, card]) => {
+    if (!searchTerm) return true;
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      card.english.question.toLowerCase().includes(searchLower) ||
+      card.english.answer.toLowerCase().includes(searchLower) ||
+      card.pinyin.question.toLowerCase().includes(searchLower) ||
+      card.pinyin.answer.toLowerCase().includes(searchLower) ||
+      card.chinese.question.toLowerCase().includes(searchLower) ||
+      card.chinese.answer.toLowerCase().includes(searchLower)
+    );
+  });
+
+  // Navigation functions
+  const goToNextCard = () => {
+    const currentIndex = filteredData.findIndex(([id]) => id === currentCard);
+    if (currentIndex < filteredData.length - 1) {
+      setCurrentCard(filteredData[currentIndex + 1][0]);
+    }
+  };
+
+  const goToPreviousCard = () => {
+    const currentIndex = filteredData.findIndex(([id]) => id === currentCard);
+    if (currentIndex > 0) {
+      setCurrentCard(filteredData[currentIndex - 1][0]);
+    }
+  };
+
+  const goToRandomCard = () => {
+    const randomIndex = Math.floor(Math.random() * filteredData.length);
+    setCurrentCard(filteredData[randomIndex][0]);
+  };
+
+  const isFirstCard = currentCard === filteredData[0]?.[0];
+  const isLastCard = currentCard === filteredData[filteredData.length - 1]?.[0];
+
+  // Create a mapping function to get completed status from QAData
+  const getCompletedCards = (data: QAData): Record<string, boolean> => {
+    const completed: Record<string, boolean> = {};
+    Object.entries(data).forEach(([id, card]) => {
+      completed[id] = card.completed || false;
+    });
+    return completed;
+  };
+
+  const toggleCompletion = async (id: string) => {
+    try {
+      const newCompleted = !dbQuestions[id].completed;
+      await updateQuestionProgress(parseInt(id), newCompleted);
+      setDbQuestions((prev) => ({
+        ...prev,
+        [id]: {
+          ...prev[id],
+          completed: newCompleted,
+        },
+      }));
+    } catch (error) {
+      console.error("Error updating progress:", error);
+    }
+  };
 
   // Show loading state while fetching data
   if (isLoading) {
@@ -119,7 +176,7 @@ export default function Home() {
     <main className="container mx-auto p-4 max-w-5xl">
       <ThemeHeader
         title="Mandarin Learning Cards"
-        onAddQuestion={addQuestion}
+        onAddQuestion={loadDbQuestions}
         onRefetch={loadDbQuestions}
       />
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
@@ -138,10 +195,10 @@ export default function Home() {
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-4">
           <ProgressOverview
-            data={data}
+            data={dbQuestions}
             filteredData={filteredData}
-            completedCards={completedCards}
-            toggleCardCompletion={toggleCardCompletion}
+            completedCards={getCompletedCards(dbQuestions)}
+            toggleCardCompletion={toggleCompletion}
             progressPercentage={progressPercentage}
             completedCount={completedCount}
             onRefetch={loadDbQuestions}
@@ -152,8 +209,8 @@ export default function Home() {
         <TabsContent value="all" className="space-y-6">
           <CardList
             filteredData={filteredData}
-            completedCards={completedCards}
-            toggleCardCompletion={toggleCardCompletion}
+            completedCards={getCompletedCards(dbQuestions)}
+            toggleCardCompletion={toggleCompletion}
             onRefetch={loadDbQuestions}
           />
         </TabsContent>
@@ -161,7 +218,7 @@ export default function Home() {
         {/* Single Card Tab */}
         <TabsContent value="single">
           <CardNavigation
-            data={data}
+            data={dbQuestions}
             currentCard={currentCard}
             setCurrentCard={setCurrentCard}
             goToPreviousCard={goToPreviousCard}
@@ -171,12 +228,12 @@ export default function Home() {
             isLastCard={isLastCard}
           />
 
-          {data[currentCard] && (
+          {dbQuestions[currentCard] && (
             <QuestionCard
               id={currentCard}
-              card={data[currentCard]}
-              isCompleted={completedCards[currentCard] || false}
-              onToggleCompletion={() => toggleCardCompletion(currentCard)}
+              card={dbQuestions[currentCard]}
+              isCompleted={dbQuestions[currentCard].completed || false}
+              onToggleCompletion={() => toggleCompletion(currentCard)}
               onRefetch={loadDbQuestions}
             />
           )}

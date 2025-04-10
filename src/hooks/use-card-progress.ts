@@ -1,45 +1,69 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo, useCallback, startTransition, useState } from "react";
 import { updateQuestionProgress } from "@/src/db/questions";
 
 export function useCardProgress(
-  totalCards: number,
-  initialProgress: Record<string, boolean>
+  initialCompletedCards: Set<string>,
+  totalCards: number
 ) {
-  const [completedCards, setCompletedCards] =
-    useState<Record<string, boolean>>(initialProgress);
+  const [completedCards, setCompletedCards] = useState(initialCompletedCards);
 
-  const toggleCardCompletion = async (id: string) => {
-    const newIsCompleted = !completedCards[id];
+  const completedCount = useMemo(() => completedCards.size, [completedCards]);
+  const progressPercentage = useMemo(
+    () => (completedCount / totalCards) * 100,
+    [completedCount, totalCards]
+  );
 
-    // Optimistically update UI
-    setCompletedCards((prev) => ({
-      ...prev,
-      [id]: newIsCompleted,
-    }));
+  const isCompleted = useCallback(
+    (cardId: string) => completedCards.has(cardId),
+    [completedCards]
+  );
 
-    try {
-      await updateQuestionProgress(parseInt(id), newIsCompleted);
-    } catch (error) {
-      console.error("Error updating progress:", error);
-      // Revert on error
-      setCompletedCards((prev) => ({
-        ...prev,
-        [id]: !newIsCompleted,
-      }));
-    }
-  };
+  const toggleCompletion = useCallback(
+    async (cardId: string) => {
+      const newValue = !completedCards.has(cardId);
 
-  // Calculate progress
-  const completedCount = Object.values(completedCards).filter(Boolean).length;
-  const progressPercentage =
-    totalCards > 0 ? (completedCount / totalCards) * 100 : 0;
+      // Optimistic update
+      startTransition(() => {
+        setCompletedCards((prev) => {
+          const newSet = new Set(prev);
+          if (newSet.has(cardId)) {
+            newSet.delete(cardId);
+          } else {
+            newSet.add(cardId);
+          }
+          return newSet;
+        });
+      });
+
+      try {
+        // Update database
+        await updateQuestionProgress(parseInt(cardId), newValue);
+      } catch (error) {
+        console.error("Error updating progress:", error);
+        // Revert optimistic update on error
+        startTransition(() => {
+          setCompletedCards((prev) => {
+            const newSet = new Set(prev);
+            if (newValue) {
+              newSet.delete(cardId);
+            } else {
+              newSet.add(cardId);
+            }
+            return newSet;
+          });
+        });
+      }
+    },
+    [completedCards]
+  );
 
   return {
-    completedCards,
-    toggleCardCompletion,
     completedCount,
     progressPercentage,
+    isCompleted,
+    toggleCompletion,
+    completedCards,
   };
 }

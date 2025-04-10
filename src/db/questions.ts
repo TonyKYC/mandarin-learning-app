@@ -39,7 +39,8 @@ export async function fetchAllQuestions(): Promise<{
   const progress: Record<string, boolean> = {};
 
   (data as QuestionRow[]).forEach((row) => {
-    qaData[row.id.toString()] = {
+    const id = row.id.toString();
+    qaData[id] = {
       english: {
         question: row.english_question,
         answer: row.english_answer,
@@ -52,8 +53,9 @@ export async function fetchAllQuestions(): Promise<{
         question: row.chinese_question,
         answer: row.chinese_answer,
       },
+      completed: row.is_completed,
     };
-    progress[row.id.toString()] = row.is_completed || false;
+    progress[id] = row.is_completed;
   });
 
   return { data: qaData, progress };

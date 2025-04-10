@@ -5,6 +5,7 @@ import {
   useContext,
   useState,
   useEffect,
+  useMemo,
   type ReactNode,
 } from "react";
 import { updateQuestionProgress } from "@/src/db/questions";
@@ -24,6 +25,7 @@ export type QAData = {
       question: string;
       answer: string;
     };
+    completed?: boolean;
   };
 };
 
@@ -61,28 +63,35 @@ export function DataProvider({
     initialProgress || {}
   );
 
-  const toggleCardCompletion = async (id: string) => {
-    const newValue = !completedCards[id];
+  const toggleCardCompletion = useMemo(
+    () => async (id: string) => {
+      const newValue = !completedCards[id];
 
-    try {
-      await updateQuestionProgress(parseInt(id), newValue);
-      setCompletedCards((prev) => ({
-        ...prev,
-        [id]: newValue,
-      }));
-    } catch (error) {
-      console.error("Error updating progress:", error);
-    }
-  };
+      try {
+        await updateQuestionProgress(parseInt(id), newValue);
+        setCompletedCards((prev) => ({
+          ...prev,
+          [id]: newValue,
+        }));
+      } catch (error) {
+        console.error("Error updating progress:", error);
+      }
+    },
+    [completedCards]
+  );
 
-  // Debug log when completedCards changes
-  useEffect(() => {}, [completedCards]);
+  // Memoize the context value to prevent unnecessary re-renders
+  const contextValue = useMemo(
+    () => ({
+      data,
+      setData,
+      completedCards,
+      toggleCardCompletion,
+    }),
+    [data, completedCards, toggleCardCompletion]
+  );
 
   return (
-    <DataContext.Provider
-      value={{ data, setData, completedCards, toggleCardCompletion }}
-    >
-      {children}
-    </DataContext.Provider>
+    <DataContext.Provider value={contextValue}>{children}</DataContext.Provider>
   );
 }
