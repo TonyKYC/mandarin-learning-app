@@ -5,7 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Maximize2, Minimize2 } from "lucide-react";
+import {
+  List,
+  Grid,
+  Grid2X2,
+  Square,
+  UnfoldVertical,
+  ListCollapse,
+} from "lucide-react";
 import type { QAData } from "@/data/interviewData";
 
 interface ProgressOverviewProps {
@@ -31,21 +38,30 @@ export function ProgressOverview({
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Your Progress</CardTitle>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="h-8 w-8 p-0"
-        >
-          {isExpanded ? (
-            <Minimize2 className="h-4 w-4" />
-          ) : (
-            <Maximize2 className="h-4 w-4" />
-          )}
-          <span className="sr-only">
-            {isExpanded ? "Compact View" : "Expanded View"}
-          </span>
-        </Button>
+        <div className="inline-flex items-center rounded-md border border-input bg-muted shadow-sm">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsExpanded(false)}
+            className={`h-8 px-3 rounded-r-none ${
+              !isExpanded && "bg-background hover:bg-background"
+            }`}
+          >
+            <ListCollapse className="h-4 w-4" />
+            <span className="sr-only">Compact View</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsExpanded(true)}
+            className={`h-8 px-3 rounded-l-none ${
+              isExpanded && "bg-background hover:bg-background"
+            }`}
+          >
+            <UnfoldVertical className="h-4 w-4" />
+            <span className="sr-only">Expanded View</span>
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
