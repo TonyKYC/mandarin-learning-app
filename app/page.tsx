@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ThemeHeader } from "@/components/theme-header"
-import { SearchBar } from "@/components/search-bar"
-import { ProgressOverview } from "@/components/progress-overview"
-import { CardList } from "@/components/card-list"
-import { CardNavigation } from "@/components/card-navigation"
-import { QuestionCard } from "@/components/question-card"
-import { useCardData } from "@/hooks/use-card-data"
-import { useCardProgress } from "@/hooks/use-card-progress"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ThemeHeader } from "@/components/theme-header";
+import { SearchBar } from "@/components/search-bar";
+import { ProgressOverview } from "@/components/progress-overview";
+import { CardList } from "@/components/card-list";
+import { CardNavigation } from "@/components/card-navigation";
+import { QuestionCard } from "@/components/question-card";
+import { useCardData } from "@/hooks/use-card-data";
+import { useCardProgress } from "@/hooks/use-card-progress";
 
-import interviewData from "@/data/interviewData"
+import interviewData from "@/data/interviewData";
 
 export default function Home() {
   const {
@@ -26,15 +26,21 @@ export default function Home() {
     addQuestion,
     isFirstCard,
     isLastCard,
-  } = useCardData(interviewData)
+  } = useCardData(interviewData);
 
-  const { completedCards, toggleCardCompletion, completedCount, progressPercentage } = useCardProgress(
-    Object.keys(data).length,
-  )
+  const {
+    completedCards,
+    toggleCardCompletion,
+    completedCount,
+    progressPercentage,
+  } = useCardProgress(Object.keys(data).length);
 
   return (
     <main className="container mx-auto p-4 max-w-5xl">
-      <ThemeHeader title="Mandarin Learning Cards" onAddQuestion={addQuestion} />
+      <ThemeHeader
+        title="Mandarin Learning Cards"
+        onAddQuestion={addQuestion}
+      />
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
       <Tabs defaultValue="overview" className="w-full">
@@ -48,6 +54,7 @@ export default function Home() {
         <TabsContent value="overview" className="space-y-4">
           <ProgressOverview
             data={data}
+            filteredData={filteredData}
             completedCards={completedCards}
             toggleCardCompletion={toggleCardCompletion}
             progressPercentage={progressPercentage}
@@ -88,5 +95,5 @@ export default function Home() {
         </TabsContent>
       </Tabs>
     </main>
-  )
+  );
 }
