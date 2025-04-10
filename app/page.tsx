@@ -27,9 +27,6 @@ export default function Home() {
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [currentCard, setCurrentCard] = useState("");
-  const [initialCompletedCards, setInitialCompletedCards] = useState<
-    Set<string>
-  >(new Set());
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -50,7 +47,6 @@ export default function Home() {
           completedSet.add(id);
         }
       });
-      setInitialCompletedCards(completedSet);
 
       if (!currentCard && Object.keys(questions).length > 0) {
         setCurrentCard(Object.keys(questions)[0]);
@@ -58,7 +54,6 @@ export default function Home() {
     } catch (error) {
       console.error("Error loading questions:", error);
       setDbQuestions({});
-      setInitialCompletedCards(new Set());
     } finally {
       setIsLoading(false);
     }
