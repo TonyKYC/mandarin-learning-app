@@ -13,6 +13,7 @@ import {
   UnfoldVertical,
   ListCollapse,
   EyeOff,
+  Eye,
 } from "lucide-react";
 import type { QAData } from "@/data/interviewData";
 
@@ -53,8 +54,17 @@ export function ProgressOverview({
               hideCompleted && "bg-slate-100 dark:bg-slate-800"
             }`}
           >
-            <EyeOff className="h-4 w-4 mr-2" />
-            Hide Completed
+            {hideCompleted ? (
+              <>
+                <Eye className="h-4 w-4 mr-2" />
+                Show Completed
+              </>
+            ) : (
+              <>
+                <EyeOff className="h-4 w-4 mr-2" />
+                Hide Completed
+              </>
+            )}
           </Button>
           <div className="inline-flex items-center rounded-md border border-input bg-muted shadow-sm">
             <Button

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Columns, LayoutGrid, EyeOff } from "lucide-react";
+import { Columns, LayoutGrid, EyeOff, Eye } from "lucide-react";
 import type { QAData } from "@/data/interviewData";
 
 interface CardListProps {
@@ -27,11 +27,35 @@ export function CardList({
 
   if (visibleData.length === 0) {
     return (
-      <p className="text-center text-muted-foreground py-8">
-        {filteredData.length === 0
-          ? "No cards match your search."
-          : "All cards are completed."}
-      </p>
+      <div className="space-y-4">
+        <div className="flex justify-end gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setHideCompleted(!hideCompleted)}
+            className={`h-8 ${
+              hideCompleted && "bg-slate-100 dark:bg-slate-800"
+            }`}
+          >
+            {hideCompleted ? (
+              <>
+                <Eye className="h-4 w-4 mr-2" />
+                Show Completed
+              </>
+            ) : (
+              <>
+                <EyeOff className="h-4 w-4 mr-2" />
+                Hide Completed
+              </>
+            )}
+          </Button>
+        </div>
+        <p className="text-center text-muted-foreground py-8">
+          {filteredData.length === 0
+            ? "No cards match your search."
+            : "All cards are completed."}
+        </p>
+      </div>
     );
   }
 
@@ -44,8 +68,17 @@ export function CardList({
           onClick={() => setHideCompleted(!hideCompleted)}
           className={`h-8 ${hideCompleted && "bg-slate-100 dark:bg-slate-800"}`}
         >
-          <EyeOff className="h-4 w-4 mr-2" />
-          Hide Completed
+          {hideCompleted ? (
+            <>
+              <Eye className="h-4 w-4 mr-2" />
+              Show Completed
+            </>
+          ) : (
+            <>
+              <EyeOff className="h-4 w-4 mr-2" />
+              Hide Completed
+            </>
+          )}
         </Button>
         <div className="inline-flex items-center rounded-md border border-input bg-muted shadow-sm">
           <Button
