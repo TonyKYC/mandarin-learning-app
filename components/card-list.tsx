@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Columns, LayoutGrid } from "lucide-react";
+import { Columns, LayoutGrid, EyeOff } from "lucide-react";
 import type { QAData } from "@/data/interviewData";
 
 interface CardListProps {
@@ -19,18 +19,34 @@ export function CardList({
   toggleCardCompletion,
 }: CardListProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [hideCompleted, setHideCompleted] = useState(false);
 
-  if (filteredData.length === 0) {
+  const visibleData = hideCompleted
+    ? filteredData.filter(([id]) => !completedCards[id])
+    : filteredData;
+
+  if (visibleData.length === 0) {
     return (
       <p className="text-center text-muted-foreground py-8">
-        No cards match your search.
+        {filteredData.length === 0
+          ? "No cards match your search."
+          : "All cards are completed."}
       </p>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setHideCompleted(!hideCompleted)}
+          className={`h-8 ${hideCompleted && "bg-slate-100 dark:bg-slate-800"}`}
+        >
+          <EyeOff className="h-4 w-4 mr-2" />
+          Hide Completed
+        </Button>
         <div className="inline-flex items-center rounded-md border border-input bg-muted shadow-sm">
           <Button
             variant="ghost"
@@ -62,7 +78,7 @@ export function CardList({
           isExpanded ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"
         }`}
       >
-        {filteredData.map(([id, card]) => (
+        {visibleData.map(([id, card]) => (
           <Card
             key={id}
             onClick={() => toggleCardCompletion(id)}

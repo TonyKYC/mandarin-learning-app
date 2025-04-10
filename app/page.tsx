@@ -105,11 +105,10 @@ export default function Home() {
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid grid-cols-4 mb-6 w-full">
+        <TabsList className="grid grid-cols-3 mb-6 w-full">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="all">All Cards</TabsTrigger>
           <TabsTrigger value="single">Single Card</TabsTrigger>
-          <TabsTrigger value="database">Database</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -154,31 +153,6 @@ export default function Home() {
               onToggleCompletion={() => toggleCardCompletion(currentCard)}
             />
           )}
-        </TabsContent>
-
-        {/* Database Tab */}
-        <TabsContent value="database" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Object.entries(dbQuestions).map(([id, question]) => (
-              <Card key={id} className="p-4">
-                <h3 className="font-semibold mb-2">Question {id}</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">English:</span>{" "}
-                    {question.english.question}
-                  </p>
-                  <p>
-                    <span className="font-medium">Pinyin:</span>{" "}
-                    {question.pinyin.question}
-                  </p>
-                  <p>
-                    <span className="font-medium">Chinese:</span>{" "}
-                    {question.chinese.question}
-                  </p>
-                </div>
-              </Card>
-            ))}
-          </div>
         </TabsContent>
       </Tabs>
     </main>
