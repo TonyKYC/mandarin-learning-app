@@ -71,10 +71,12 @@ export default function Home() {
     loadDbQuestions();
   }, []);
 
-  const { completedCount, progressPercentage } = useCardProgress(
-    initialCompletedCards,
-    Object.keys(dbQuestions).length
-  );
+  // Calculate progress directly from dbQuestions
+  const completedCount = Object.values(dbQuestions).filter(
+    (card) => card.completed
+  ).length;
+  const progressPercentage =
+    (completedCount / Object.keys(dbQuestions).length) * 100;
 
   // Filter data based on search term
   const filteredData = Object.entries(dbQuestions).filter(([_, card]) => {
