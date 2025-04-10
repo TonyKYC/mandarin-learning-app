@@ -18,20 +18,21 @@ export default function Home() {
   const [dbQuestions, setDbQuestions] = useState<QAData>({});
   const [isLoading, setIsLoading] = useState(true);
 
+  const loadDbQuestions = async () => {
+    try {
+      console.log("Fetching questions from database...");
+      const questions = await fetchAllQuestions();
+      console.log("Fetched questions:", questions);
+      setDbQuestions(questions || {});
+    } catch (error) {
+      console.error("Error loading questions:", error);
+      setDbQuestions({});
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadDbQuestions = async () => {
-      try {
-        console.log("Fetching questions from database...");
-        const questions = await fetchAllQuestions();
-        console.log("Fetched questions:", questions);
-        setDbQuestions(questions || {}); // Ensure we set an empty object if questions is null/undefined
-      } catch (error) {
-        console.error("Error loading questions:", error);
-        setDbQuestions({}); // Set empty object on error
-      } finally {
-        setIsLoading(false);
-      }
-    };
     loadDbQuestions();
   }, []);
 
@@ -101,6 +102,7 @@ export default function Home() {
       <ThemeHeader
         title="Mandarin Learning Cards"
         onAddQuestion={addQuestion}
+        onRefetch={loadDbQuestions}
       />
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 

@@ -23,10 +23,12 @@ import { v4 as uuidv4 } from "uuid";
 
 interface CreateQuestionModalProps {
   onAddQuestion: (question: QAData[keyof QAData], id: string) => void;
+  onRefetch?: () => Promise<void>;
 }
 
 export function CreateQuestionModal({
   onAddQuestion,
+  onRefetch,
 }: CreateQuestionModalProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -87,8 +89,7 @@ export function CreateQuestionModal({
         },
       };
       await createQuestion(newQuestion);
-
-      // Update local state through callback
+      await onRefetch?.();
       onAddQuestion(newQuestion, id);
 
       // Reset form and close modal

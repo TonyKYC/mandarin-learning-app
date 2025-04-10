@@ -7,9 +7,14 @@ import type { QAData } from "@/mock-data/interviewData";
 interface ThemeHeaderProps {
   title: string;
   onAddQuestion: (question: QAData[keyof QAData], id: string) => void;
+  onRefetch?: () => Promise<void>;
 }
 
-export function ThemeHeader({ title, onAddQuestion }: ThemeHeaderProps) {
+export function ThemeHeader({
+  title,
+  onAddQuestion,
+  onRefetch,
+}: ThemeHeaderProps) {
   const handleAddQuestion = (question: QAData[keyof QAData], id: string) => {
     onAddQuestion(question, id);
   };
@@ -20,7 +25,10 @@ export function ThemeHeader({ title, onAddQuestion }: ThemeHeaderProps) {
         {title}
       </h1>
       <div className="flex items-center gap-2">
-        <CreateQuestionModal onAddQuestion={handleAddQuestion} />
+        <CreateQuestionModal
+          onAddQuestion={handleAddQuestion}
+          onRefetch={onRefetch}
+        />
         <ThemeToggle />
       </div>
     </div>
