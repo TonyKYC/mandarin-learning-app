@@ -1,6 +1,5 @@
 "use client";
 
-import { Shuffle } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import {
   Select,
@@ -10,6 +9,7 @@ import {
   SelectValue,
 } from "@/src/components/ui/select";
 import type { QAData } from "@/src/types/questions.types";
+import { Shuffle } from "lucide-react";
 
 interface CardNavigationProps {
   data: QAData;

@@ -1,10 +1,10 @@
-import type React from "react";
+import { DataProvider } from "@/app/data-provider";
+import { ThemeProvider } from "@/src/components/theme-provider";
+import { fetchAllQuestions } from "@/src/db/questions";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import type React from "react";
 import "./globals.css";
-import { ThemeProvider } from "@/src/components/theme-provider";
-import { DataProvider } from "@/app/data-provider";
-import { fetchAllQuestions } from "@/src/db/questions";
 
 const inter = Inter({ subsets: ["latin"] });
 

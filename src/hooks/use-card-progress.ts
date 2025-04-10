@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useCallback, startTransition, useState } from "react";
 import { updateQuestionProgress } from "@/src/db/questions";
+import { startTransition, useCallback, useMemo, useState } from "react";
 
 export function useCardProgress(
   initialCompletedCards: Set<string>,

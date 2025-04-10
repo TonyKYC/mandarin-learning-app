@@ -1,14 +1,13 @@
 "use client";
 
+import { updateQuestionProgress } from "@/src/db/questions";
 import {
   createContext,
   useContext,
-  useState,
-  useEffect,
   useMemo,
+  useState,
   type ReactNode,
 } from "react";
-import { updateQuestionProgress } from "@/src/db/questions";
 
 // Define the data structure
 export type QAData = {

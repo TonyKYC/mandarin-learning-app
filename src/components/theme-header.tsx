@@ -1,7 +1,7 @@
 "use client";
 
-import { ThemeToggle } from "@/src/components/theme-toggle";
 import { CreateQuestionModal } from "@/src/components/create-question-modal";
+import { ThemeToggle } from "@/src/components/theme-toggle";
 import type { QAData } from "@/src/types/questions.types";
 
 interface ThemeHeaderProps {

@@ -9,8 +9,6 @@ import {
 import { Checkbox } from "@/src/components/ui/checkbox";
 import type { QAData } from "@/src/types/questions.types";
 import { EditQuestionModal } from "./edit-question-modal";
-import { Button } from "@/src/components/ui/button";
-import { CheckCircle2, Circle } from "lucide-react";
 
 interface QuestionCardProps {
   id: string;

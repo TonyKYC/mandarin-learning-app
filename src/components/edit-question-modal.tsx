@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { Pencil } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import {
   Dialog,
@@ -13,15 +11,17 @@ import {
   DialogTrigger,
 } from "@/src/components/ui/dialog";
 import { Label } from "@/src/components/ui/label";
-import { Textarea } from "@/src/components/ui/textarea";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/src/components/ui/tabs";
-import type { QAData } from "@/src/types/questions.types";
+import { Textarea } from "@/src/components/ui/textarea";
 import { updateQuestion } from "@/src/db/questions";
+import type { QAData } from "@/src/types/questions.types";
+import { Pencil } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface EditQuestionModalProps {

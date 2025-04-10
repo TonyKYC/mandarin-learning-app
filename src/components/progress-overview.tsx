@@ -1,26 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { Button } from "@/src/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/src/components/ui/card";
-import { Progress } from "@/src/components/ui/progress";
 import { Checkbox } from "@/src/components/ui/checkbox";
-import { Button } from "@/src/components/ui/button";
-import {
-  List,
-  Grid,
-  Grid2X2,
-  Square,
-  UnfoldVertical,
-  ListCollapse,
-  EyeOff,
-  Eye,
-} from "lucide-react";
+import { Progress } from "@/src/components/ui/progress";
 import type { QAData } from "@/src/types/questions.types";
+import { Eye, EyeOff, ListCollapse, UnfoldVertical } from "lucide-react";
+import { useState } from "react";
 import { EditQuestionModal } from "./edit-question-modal";
 
 interface ProgressOverviewProps {

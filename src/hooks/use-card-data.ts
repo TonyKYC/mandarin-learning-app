@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useCallback, startTransition } from "react";
 import type { QAData } from "@/app/data-provider";
+import { startTransition, useCallback, useMemo } from "react";
 import { useCardProgress } from "./use-card-progress";
 
 export function useCardData(

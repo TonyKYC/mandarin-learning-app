@@ -1,23 +1,20 @@
 "use client";
 
+import { QAData } from "@/app/data-provider";
+import { CardList } from "@/src/components/card-list";
+import { CardNavigation } from "@/src/components/card-navigation";
+import { ProgressOverview } from "@/src/components/progress-overview";
+import { QuestionCard } from "@/src/components/question-card";
+import { SearchBar } from "@/src/components/search-bar";
+import { ThemeHeader } from "@/src/components/theme-header";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/src/components/ui/tabs";
-import { ThemeHeader } from "@/src/components/theme-header";
-import { SearchBar } from "@/src/components/search-bar";
-import { ProgressOverview } from "@/src/components/progress-overview";
-import { CardList } from "@/src/components/card-list";
-import { CardNavigation } from "@/src/components/card-navigation";
-import { QuestionCard } from "@/src/components/question-card";
-import { useCardData } from "@/src/hooks/use-card-data";
-import { useCardProgress } from "@/src/hooks/use-card-progress";
 import { fetchAllQuestions, updateQuestionProgress } from "@/src/db/questions";
-import { Card } from "@/src/components/ui/card";
-import { useEffect, useState, useMemo, useCallback } from "react";
-import { QAData } from "@/app/data-provider";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function Home() {
   const [dbQuestions, setDbQuestions] = useState<QAData>({});
