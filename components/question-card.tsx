@@ -1,19 +1,30 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import type { QAData } from "@/data/interviewData"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import type { QAData } from "@/data/interviewData";
 
 interface QuestionCardProps {
-  id: string
-  card: QAData[keyof QAData]
-  isCompleted: boolean
-  onToggleCompletion: () => void
+  id: string;
+  card: QAData[keyof QAData];
+  isCompleted: boolean;
+  onToggleCompletion: () => void;
 }
 
-export function QuestionCard({ id, card, isCompleted, onToggleCompletion }: QuestionCardProps) {
+export function QuestionCard({
+  id,
+  card,
+  isCompleted,
+  onToggleCompletion,
+}: QuestionCardProps) {
   return (
-    <Card>
+    <Card
+      className={
+        isCompleted
+          ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900"
+          : ""
+      }
+    >
       <CardHeader className="bg-slate-50 dark:bg-neutral-950 border-b border-white/20 flex flex-row items-center justify-between">
         <CardTitle className="text-lg">Question {id}</CardTitle>
         <Checkbox checked={isCompleted} onCheckedChange={onToggleCompletion} />
@@ -22,7 +33,9 @@ export function QuestionCard({ id, card, isCompleted, onToggleCompletion }: Ques
         <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x dark:divide-slate-700">
           <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
             <div>
-              <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">Question</h3>
+              <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">
+                Question
+              </h3>
               <p className="mt-2 text-lg sm:text-xl text-slate-700 dark:text-slate-300 break-words">
                 {card.english.question}
               </p>
@@ -36,7 +49,9 @@ export function QuestionCard({ id, card, isCompleted, onToggleCompletion }: Ques
           </div>
           <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
             <div>
-              <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">Answer</h3>
+              <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">
+                Answer
+              </h3>
               <p className="mt-2 text-lg sm:text-xl text-slate-700 dark:text-slate-300 break-words">
                 {card.english.answer}
               </p>
@@ -51,5 +66,5 @@ export function QuestionCard({ id, card, isCompleted, onToggleCompletion }: Ques
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
