@@ -16,7 +16,7 @@ import { useCardData } from "@/src/hooks/use-card-data";
 import { useCardProgress } from "@/src/hooks/use-card-progress";
 import { fetchAllQuestions, updateQuestionProgress } from "@/src/db/questions";
 import { Card } from "@/src/components/ui/card";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { QAData } from "@/app/data-provider";
 
 export default function Home() {
@@ -71,78 +71,101 @@ export default function Home() {
     loadDbQuestions();
   }, []);
 
-  // Calculate progress directly from dbQuestions
-  const completedCount = Object.values(dbQuestions).filter(
-    (card) => card.completed
-  ).length;
-  const progressPercentage =
-    (completedCount / Object.keys(dbQuestions).length) * 100;
+  // Memoize filtered data
+  const filteredData = useMemo(
+    () =>
+      Object.entries(dbQuestions).filter(([_, card]) => {
+        if (!searchTerm) return true;
+        const searchLower = searchTerm.toLowerCase();
+        return (
+          card.english.question.toLowerCase().includes(searchLower) ||
+          card.english.answer.toLowerCase().includes(searchLower) ||
+          card.pinyin.question.toLowerCase().includes(searchLower) ||
+          card.pinyin.answer.toLowerCase().includes(searchLower) ||
+          card.chinese.question.toLowerCase().includes(searchLower) ||
+          card.chinese.answer.toLowerCase().includes(searchLower)
+        );
+      }),
+    [dbQuestions, searchTerm]
+  );
 
-  // Filter data based on search term
-  const filteredData = Object.entries(dbQuestions).filter(([_, card]) => {
-    if (!searchTerm) return true;
-    const searchLower = searchTerm.toLowerCase();
-    return (
-      card.english.question.toLowerCase().includes(searchLower) ||
-      card.english.answer.toLowerCase().includes(searchLower) ||
-      card.pinyin.question.toLowerCase().includes(searchLower) ||
-      card.pinyin.answer.toLowerCase().includes(searchLower) ||
-      card.chinese.question.toLowerCase().includes(searchLower) ||
-      card.chinese.answer.toLowerCase().includes(searchLower)
-    );
-  });
+  // Memoize progress calculations
+  const { completedCount, progressPercentage } = useMemo(() => {
+    const completedCount = Object.values(dbQuestions).filter(
+      (card) => card.completed
+    ).length;
+    const totalCount = Object.keys(dbQuestions).length;
+    return {
+      completedCount,
+      progressPercentage:
+        totalCount > 0 ? (completedCount / totalCount) * 100 : 0,
+    };
+  }, [dbQuestions]);
 
-  // Navigation functions
-  const goToNextCard = () => {
+  // Memoize navigation functions
+  const goToNextCard = useCallback(() => {
     const currentIndex = filteredData.findIndex(([id]) => id === currentCard);
     if (currentIndex < filteredData.length - 1) {
       setCurrentCard(filteredData[currentIndex + 1][0]);
     }
-  };
+  }, [filteredData, currentCard]);
 
-  const goToPreviousCard = () => {
+  const goToPreviousCard = useCallback(() => {
     const currentIndex = filteredData.findIndex(([id]) => id === currentCard);
     if (currentIndex > 0) {
       setCurrentCard(filteredData[currentIndex - 1][0]);
     }
-  };
+  }, [filteredData, currentCard]);
 
-  const goToRandomCard = () => {
+  const goToRandomCard = useCallback(() => {
     const randomIndex = Math.floor(Math.random() * filteredData.length);
     setCurrentCard(filteredData[randomIndex][0]);
-  };
+  }, [filteredData]);
 
-  const isFirstCard = currentCard === filteredData[0]?.[0];
-  const isLastCard = currentCard === filteredData[filteredData.length - 1]?.[0];
+  // Memoize completed cards mapping
+  const getCompletedCards = useCallback(
+    (data: QAData): Record<string, boolean> => {
+      const completed: Record<string, boolean> = {};
+      Object.entries(data).forEach(([id, card]) => {
+        completed[id] = card.completed || false;
+      });
+      return completed;
+    },
+    []
+  );
 
-  // Create a mapping function to get completed status from QAData
-  const getCompletedCards = (data: QAData): Record<string, boolean> => {
-    const completed: Record<string, boolean> = {};
-    Object.entries(data).forEach(([id, card]) => {
-      completed[id] = card.completed || false;
-    });
-    return completed;
-  };
+  // Memoize toggle completion function
+  const toggleCompletion = useCallback(
+    async (id: string) => {
+      try {
+        const newCompleted = !dbQuestions[id].completed;
+        await updateQuestionProgress(parseInt(id), newCompleted);
+        setDbQuestions((prev) => ({
+          ...prev,
+          [id]: {
+            ...prev[id],
+            completed: newCompleted,
+          },
+        }));
+      } catch (error) {
+        console.error("Error updating progress:", error);
+      }
+    },
+    [dbQuestions]
+  );
 
-  const toggleCompletion = async (id: string) => {
-    try {
-      const newCompleted = !dbQuestions[id].completed;
-      await updateQuestionProgress(parseInt(id), newCompleted);
-      setDbQuestions((prev) => ({
-        ...prev,
-        [id]: {
-          ...prev[id],
-          completed: newCompleted,
-        },
-      }));
-    } catch (error) {
-      console.error("Error updating progress:", error);
-    }
-  };
+  // Memoize card navigation state
+  const { isFirstCard, isLastCard } = useMemo(
+    () => ({
+      isFirstCard: currentCard === filteredData[0]?.[0],
+      isLastCard: currentCard === filteredData[filteredData.length - 1]?.[0],
+    }),
+    [currentCard, filteredData]
+  );
 
-  // Show loading state while fetching data
-  if (isLoading) {
-    return (
+  // Memoize loading state
+  const loadingState = useMemo(
+    () => (
       <main className="container mx-auto p-4 max-w-5xl">
         <div className="space-y-4">
           <div className="h-8 w-[200px] bg-gray-200 animate-pulse rounded" />
@@ -157,12 +180,13 @@ export default function Home() {
           </div>
         </div>
       </main>
-    );
-  }
+    ),
+    []
+  );
 
-  // Show message if no data is available
-  if (!isLoading && Object.keys(dbQuestions).length === 0) {
-    return (
+  // Memoize empty state
+  const emptyState = useMemo(
+    () => (
       <main className="container mx-auto p-4 max-w-5xl">
         <div className="text-center py-8">
           <h2 className="text-xl font-semibold mb-2">No Questions Available</h2>
@@ -171,7 +195,18 @@ export default function Home() {
           </p>
         </div>
       </main>
-    );
+    ),
+    []
+  );
+
+  // Show loading state while fetching data
+  if (isLoading) {
+    return loadingState;
+  }
+
+  // Show message if no data is available
+  if (!isLoading && Object.keys(dbQuestions).length === 0) {
+    return emptyState;
   }
 
   return (
