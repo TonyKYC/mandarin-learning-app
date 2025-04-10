@@ -59,21 +59,28 @@ export function ProgressOverview({
             {filteredData.map(([id, card]) => (
               <div
                 key={id}
-                className={`p-4 border rounded-lg flex ${
-                  isExpanded ? "flex-col" : "items-center"
-                } justify-between ${
-                  completedCards[id]
-                    ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900"
-                    : ""
-                }`}
+                onClick={() => toggleCardCompletion(id)}
+                className={`p-4 border rounded-lg ${
+                  isExpanded ? "flex-col" : ""
+                } 
+                  ${
+                    completedCards[id]
+                      ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900 hover:bg-green-100 dark:hover:bg-green-900/30"
+                      : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                  } cursor-pointer transition-colors`}
               >
-                <div className={`min-w-0 flex-1 ${isExpanded ? "" : "pr-2"}`}>
-                  <div className="flex items-center">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between mb-2">
                     <span className="font-medium">Question {id}</span>
+                    <Checkbox
+                      checked={completedCards[id] || false}
+                      onCheckedChange={() => toggleCardCompletion(id)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
                   </div>
                   {isExpanded ? (
                     <>
-                      <p className="text-sm text-muted-foreground mt-2">
+                      <p className="text-sm text-muted-foreground">
                         {card.english.question}
                       </p>
                       <p className="text-sm text-rose-600 dark:text-rose-400 mt-1">
@@ -89,11 +96,6 @@ export function ProgressOverview({
                     </p>
                   )}
                 </div>
-                <Checkbox
-                  checked={completedCards[id] || false}
-                  onCheckedChange={() => toggleCardCompletion(id)}
-                  className={isExpanded ? "mt-2 self-end" : ""}
-                />
               </div>
             ))}
           </div>

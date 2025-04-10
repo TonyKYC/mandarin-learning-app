@@ -28,17 +28,20 @@ export function CardList({
       {filteredData.map(([id, card]) => (
         <Card
           key={id}
-          className={`overflow-hidden ${
-            completedCards[id]
-              ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900"
-              : ""
-          }`}
+          onClick={() => toggleCardCompletion(id)}
+          className={`overflow-hidden cursor-pointer transition-colors
+            ${
+              completedCards[id]
+                ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900 hover:bg-green-100 dark:hover:bg-green-900/30"
+                : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
+            }`}
         >
           <CardHeader className="bg-slate-50 dark:bg-neutral-950 border-b border-white/20 flex flex-row items-center justify-between">
             <CardTitle className="text-lg">Question {id}</CardTitle>
             <Checkbox
               checked={completedCards[id] || false}
               onCheckedChange={() => toggleCardCompletion(id)}
+              onClick={(e) => e.stopPropagation()}
             />
           </CardHeader>
           <CardContent className="p-0">

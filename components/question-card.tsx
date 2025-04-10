@@ -19,15 +19,21 @@ export function QuestionCard({
 }: QuestionCardProps) {
   return (
     <Card
-      className={
-        isCompleted
-          ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900"
-          : ""
-      }
+      onClick={onToggleCompletion}
+      className={`cursor-pointer transition-colors
+        ${
+          isCompleted
+            ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900 hover:bg-green-100 dark:hover:bg-green-900/30"
+            : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
+        }`}
     >
       <CardHeader className="bg-slate-50 dark:bg-neutral-950 border-b border-white/20 flex flex-row items-center justify-between">
         <CardTitle className="text-lg">Question {id}</CardTitle>
-        <Checkbox checked={isCompleted} onCheckedChange={onToggleCompletion} />
+        <Checkbox
+          checked={isCompleted}
+          onCheckedChange={onToggleCompletion}
+          onClick={(e) => e.stopPropagation()}
+        />
       </CardHeader>
       <CardContent className="p-0">
         <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x dark:divide-slate-700">
